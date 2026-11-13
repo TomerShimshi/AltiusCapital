@@ -6,3 +6,8 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+assignment/portfolioassignment/
+ASSIGNMENT*.pdf
+.local/
+*.zip
+.pytest_cache/
