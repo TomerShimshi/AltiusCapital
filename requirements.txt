@@ -16,3 +16,4 @@ python-multipart
 pyyaml
 pytest
 httpx
+wordninja
