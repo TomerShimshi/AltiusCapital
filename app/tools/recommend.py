@@ -92,13 +92,14 @@ def recommend(engine, ticker: str, policy: dict = DEFAULT_POLICY) -> dict:
     else:
         action = "no_position_buy" if score >= 0.4 else "no_position_avoid" if score <= -0.4 else "no_position_watch"
 
-    if n_houses == 0 or len(conflicts) >= 2 and "houses_disagree" in conflicts:
-        confidence = "low" if (n_houses == 0 or "pt_conflict" in conflicts or
-                               "after_portfolio_snapshot" in conflicts) else "medium"
-    elif conflicts and conflicts != ["ratings_not_comparable"]:
-        confidence = "medium"
+    material = [c for c in conflicts if c != "ratings_not_comparable"]
+    has_consensus = any(e["source"].startswith("Consensus estimates.xlsx (Price") for e in evidence)
+    if not evidence or "pt_conflict" in conflicts:
+        confidence = "low"
+    elif n_houses >= 2 and not material and has_consensus:
+        confidence = "high"
     else:
-        confidence = "high" if n_houses >= 3 else "medium"
+        confidence = "medium"
 
     alts = {"trim": "Trim: ", "hold": "Hold: ", "add": "Add: ", "exit": "Exit: "}
     reason = {}
@@ -115,6 +116,8 @@ def recommend(engine, ticker: str, policy: dict = DEFAULT_POLICY) -> dict:
         would.append("A broker note contradicts itself on its price target; a corrected note would change the evidence.")
     if "after_portfolio_snapshot" in conflicts:
         would.append("A note postdates the 30 Jun 2026 portfolio snapshot; refreshed prices could change the weight and call.")
+    if n_houses == 0:
+        would.append("No individual broker notes are on file for this name; the view rests on vendor consensus only.")
     if pos:
         would.append(f"Raising the cap above {pos['weight']:.1%} would remove the over-cap rule." if "position_over_cap" in rules
                      else f"A cap below {pos['weight']:.1%} would trigger a trim.")
