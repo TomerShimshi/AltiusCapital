@@ -41,7 +41,7 @@ class Ladder:
                 code = getattr(e, "code", None)
                 if code not in RETRYABLE and code not in MISSING:
                     raise
-                self.cooling_until[m] = now + (3600 if code in MISSING else self.cooldown_s)
+                self.cooling_until[m] = now + (3600 if code in MISSING else self.cooldown_s * (3 if code == 504 else 1))
                 self.tracer.step(run_id, "fallback", m, dict(code=code, error=str(e)[:200],
                                                              cooling_s=self.cooling_until[m] - now),
                                  model=m, ms=int((time.time() - t0) * 1000))
@@ -55,7 +55,7 @@ class Ladder:
         raise AllModelsLimited(min(waits) if waits else self.cooldown_s)
 
 
-def gemini_call(api_key: str = None, timeout_ms: int = 30000):
+def gemini_call(api_key: str = None, timeout_ms: int = 20000):
     """Provider adapter: returns call(model, contents, system, tools) -> LLMResult."""
     from google import genai
     from google.genai import types

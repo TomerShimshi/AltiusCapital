@@ -76,3 +76,10 @@ def test_missing_model_404_cooled_long_and_other_errors_raise(tr):
     assert lad.cooling_until["a"] >= 3600
     with pytest.raises(Err):
         Ladder(["a"], Fake({"a": Err(400)}), t, clock=Clock()).generate(rid, [])
+
+
+def test_timeout_504_cools_longer_than_429(tr):
+    t, rid = tr
+    lad = Ladder(["a", "b"], Fake({"a": Err(504), "b": "ok"}), t, clock=Clock(), cooldown_s=60)
+    lad.generate(rid, [])
+    assert lad.cooling_until["a"] == 180

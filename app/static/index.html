@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Equity Research Assistant</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16202a;--mute:#5d6b79;--line:#dde2e8;--acc:#1f5eff;--user:#e8efff}
+@media(prefers-color-scheme:dark){:root{--bg:#10151b;--card:#18202a;--ink:#e6ebf0;--mute:#97a4b2;--line:#2a3542;--acc:#6b95ff;--user:#1f2d4d}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:17px;margin:0}main{max-width:860px;margin:0 auto;padding:16px}
+#log{display:flex;flex-direction:column;gap:12px;min-height:50vh}
+.msg{padding:12px 14px;border-radius:10px;background:var(--card);border:1px solid var(--line);white-space:normal;overflow-wrap:anywhere}
+.me{background:var(--user);align-self:flex-end;max-width:85%}
+.cite{font-size:12.5px;color:var(--mute);margin-top:8px}.cite li{margin:2px 0}
+button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer}
+button.ghost{background:transparent;color:var(--acc);border:1px solid var(--line);padding:4px 10px;font-size:13px;margin-top:8px}
+form{display:flex;gap:8px;position:sticky;bottom:0;padding:12px 0;background:var(--bg)}
+input[type=text]{flex:1;padding:11px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.steps{margin-top:8px;font-size:12.5px;border-top:1px dashed var(--line);padding-top:8px}
+.step{margin:4px 0}.k{display:inline-block;min-width:64px;font-weight:600}.k.fallback,.k.error{color:#c0392b}
+pre{white-space:pre-wrap;max-height:200px;overflow:auto;background:var(--bg);padding:6px;border-radius:6px;margin:4px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.chips button{background:var(--card);color:var(--ink);border:1px solid var(--line);font-size:13px;padding:6px 10px}
+</style></head><body>
+<header><h1>Equity Research Assistant</h1>
+<div><label class="ghost"><input id="up" type="file" accept="application/pdf" hidden><button class="ghost" type="button" onclick="up.click()">Add a document</button></label> <span id="docs" style="color:var(--mute);font-size:13px"></span></div></header>
+<main><div class="chips" id="chips"></div><div id="log"></div>
+<form id="f"><input id="q" type="text" placeholder="Ask about a company, your holdings, or whether to buy or sell…" autocomplete="off"><button>Ask</button></form></main>
+<script>
+const $=s=>document.querySelector(s), log=$('#log');
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^\s*[-*] (.+)$/gm,'• $1').replace(/\n/g,'<br>');
+["What do I own, and how concentrated am I?","Do my books match the custodian statements?","Should I sell NVIDIA?","Is Tesla a buy?","What do the brokers say about Lilly?"]
+ .forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{$('#q').value=t;$('#f').requestSubmit()};$('#chips').append(b)});
+function add(html,cls=''){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;log.append(d);d.scrollIntoView({block:'end'});return d}
+async function refreshDocs(){try{const d=await (await fetch('/documents')).json();$('#docs').textContent=Object.entries(d).map(([k,v])=>v+' '+k).join(' · ')}catch(e){}}
+$('#f').onsubmit=async e=>{e.preventDefault();const q=$('#q').value.trim();if(!q)return;$('#q').value='';
+ add(esc(q),'me');const w=add('<i>Researching… (this can take up to a minute on the free tier)</i>');
+ try{const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
+  if(!r.ok)throw new Error(await r.text());const d=await r.json();
+  let h=md(d.answer);
+  if(d.citations.length)h+='<details class="cite"><summary>Sources ('+d.citations.length+')</summary><ul>'+d.citations.map(c=>'<li><b>'+esc(c.source)+'</b>'+(c.page?' p.'+c.page:'')+' — '+esc(c.quote||'')+'</li>').join('')+'</ul></details>';
+  h+='<br><button class="ghost" data-run="'+d.run_id+'">Show the work</button><div class="steps" hidden></div>';
+  w.innerHTML=h;
+  w.querySelector('button').onclick=async ev=>{const b=ev.target,box=w.querySelector('.steps');
+   if(!box.hidden){box.hidden=true;return}
+   const t=await (await fetch('/trace/'+b.dataset.run)).json();
+   box.innerHTML=t.steps.map(s=>'<div class="step"><span class="k '+s.kind+'">'+s.kind+'</span> '+esc(s.name)+(s.model?' <i>('+esc(s.model)+')</i>':'')+' · '+s.ms+' ms<pre>'+esc(JSON.stringify(s.payload,null,1).slice(0,1500))+'</pre></div>').join('')||'No steps.';
+   box.hidden=false};
+ }catch(err){w.innerHTML='Something went wrong: '+esc(String(err))}};
+$('#up').onchange=async e=>{const f=e.target.files[0];if(!f)return;const fd=new FormData();fd.append('file',f);
+ const r=await (await fetch('/upload',{method:'POST',body:fd})).json();
+ add('Document <b>'+esc(f.name)+'</b>: '+esc(r.status||JSON.stringify(r))+(r.doc_type?' ('+esc(r.doc_type)+(r.ticker?', '+esc(r.ticker):'')+')':''));refreshDocs()};
+refreshDocs();
+</script></body></html>
