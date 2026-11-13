@@ -42,7 +42,7 @@ fx_rates = Table("fx_rates", md,
 consensus_estimates = Table("consensus_estimates", md,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("ticker", S(16)), Column("period", S(32)), Column("revenue_cons", Float),
-    Column("eps_cons", Float), Column("eps_basis", S(16)), Column("report_date", S(16)),
+    Column("eps_cons", Float), Column("eps_basis", S(64)), Column("report_date", S(16)),
     Column("revenue_actual", Float), Column("eps_actual", Float), Column("eps_surprise", Float))
 price_targets = Table("price_targets", md,
     Column("id", Integer, primary_key=True, autoincrement=True),
@@ -52,7 +52,7 @@ broker_notes = Table("broker_notes", md,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("date", S(16)), Column("house", S(64)), Column("ticker", S(16)),
     Column("rating", S(32)), Column("price_target", Float), Column("analyst", S(64)),
-    Column("eps_basis", S(16)), Column("source", S(255)), Column("flags", JSON))
+    Column("eps_basis", S(64)), Column("source", S(255)), Column("flags", JSON))
 custodian_positions = Table("custodian_positions", md,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("entity", S(128)), Column("account", S(32)), Column("ticker", S(16)),
