@@ -9,7 +9,7 @@ Design rationale: [DESIGN.md](DESIGN.md).
 - Python 3.9+ (developed on 3.9)
 - MySQL 8 (Docker or a local install)
 - A free Gemini API key from Google AI Studio
-- The client documents folder (`portfolio/`), not included in this repo
+- The client documents folder (`portfolio/`): already in the zip at `assignment/portfolio/` (the git repo does not track it)
 
 No Tesseract or other system OCR is needed: OCR runs in pure Python (rapidocr-onnxruntime).
 
@@ -26,7 +26,7 @@ docker compose up -d            # creates database `altius` (root / root on 127.
 # 3. Configuration
 cp .env.example .env            # then edit: GEMINI_API_KEY=..., DB_URL=... (see below)
 
-# 4. Put the client documents at assignment/portfolio/  (or set PORTFOLIO_DIR in .env)
+# 4. The client documents are at assignment/portfolio/ in the zip (otherwise set PORTFOLIO_DIR in .env)
 
 # 5. Load everything (spreadsheets, statements, broker notes, all PDFs incl. OCR of scans)
 python -m app.bootstrap         # first run downloads the embedding model (~90 MB)
