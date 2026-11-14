@@ -6,9 +6,13 @@ from google.genai import types
 from app.llm import AllModelsLimited
 from app.retrieval import search_documents
 from app.tools.brokers import broker_views
+from app.tools.documents import list_documents
 from app.tools.portfolio import portfolio_exposure, reconcile_positions
 from app.tools.recommend import recommend
 from app.trace import Tracer
+from sqlalchemy import func, select
+
+from app.models import documents
 
 MAX_STEPS = 6
 
@@ -19,6 +23,7 @@ GROUNDING RULES (strict)
 - All companies, figures, people and events in the documents are fictional. NEVER use your own knowledge of these companies. Use only tool results.
 - Every number and claim must come from a tool result and be cited as [source, page] or [source]. If a tool returns no data or no documents, say so plainly ("There are no documents on file for X") and do not give a verdict.
 - Prefer tools: portfolio_exposure / reconcile_positions for the investor's holdings and mismatches; broker_views for analyst opinions; search_documents for what company filings, releases and transcripts say; recommend for buy/sell/hold style questions (and call search_documents too for qualitative reasons).
+- Dates: every document carries a date (as_of). "Latest", "last quarter" and "recent" mean the newest document by as_of, never your assumption. If unsure which documents exist for a company, call list_documents first, then search. Compare periods by their dates, and say when a document is older than the newest one on file or has no date.
 - Broker rating scales are not comparable across houses; say when houses disagree and never average them. Mention flags such as a note contradicting itself or postdating the 30 Jun 2026 snapshot.
 - When the books and the custodian statement disagree, say so and say which source you used (the custodian statement is the record).
 
@@ -38,6 +43,11 @@ TOOLS = [types.Tool(function_declarations=[
         parameters=_S(type="OBJECT", properties={
             "query": _S(type="STRING", description="what to look for; include exact figures or phrases when known"),
             "ticker": _S(type="STRING", description="optional ticker filter, e.g. NVDA")}, required=["query"])),
+    types.FunctionDeclaration(name="list_documents",
+        description="Which documents are on file, newest first, with type and date; marks the latest of each type. Use to find 'the latest results/call/10-K' or to compare periods.",
+        parameters=_S(type="OBJECT", properties={
+            "ticker": _S(type="STRING", description="optional, e.g. MSFT"),
+            "doc_type": _S(type="STRING", description="optional: earnings_release, transcript, 10-K, 10-Q, broker_note, presentation_or_event, custodian_statement")})),
     types.FunctionDeclaration(name="portfolio_exposure",
         description="The investor's combined holdings across both accounts: quantity, USD value, weight, cost basis, unrealised P&L. Takes no arguments.",
         parameters=_S(type="OBJECT", properties={})),
@@ -61,6 +71,7 @@ def _search(engine, query, ticker=None):
 
 DISPATCH = {
     "search_documents": _search,
+    "list_documents": lambda e, ticker=None, doc_type=None: list_documents(e, ticker, doc_type),
     "portfolio_exposure": lambda e: portfolio_exposure(e),
     "reconcile_positions": lambda e: reconcile_positions(e),
     "broker_views": lambda e, ticker: broker_views(e, ticker),
@@ -88,6 +99,13 @@ def _json(o):
     return json.loads(json.dumps(o, default=str))
 
 
+def _system(engine) -> str:
+    with engine.connect() as c:
+        newest = c.execute(select(func.max(documents.c.as_of)).where(documents.c.status == "ok")).scalar()
+    return SYSTEM + (f"\nDATA DATES: positions and prices are as of 30 Jun 2026; the newest document on file is dated "
+                     f"{newest}. You have no other source of today's date.\n" if newest else "")
+
+
 class Agent:
     def __init__(self, engine, ladder):
         self.engine, self.ladder, self.tracer = engine, ladder, Tracer(engine)
@@ -98,7 +116,7 @@ class Agent:
         cites, text = [], None
         try:
             for _ in range(MAX_STEPS):
-                res = self.ladder.generate(rid, contents, system=SYSTEM, tools=TOOLS)
+                res = self.ladder.generate(rid, contents, system=_system(self.engine), tools=TOOLS)
                 if not res.calls:
                     text = res.text.strip() or "I could not produce an answer."
                     break
@@ -121,7 +139,7 @@ class Agent:
                 contents.append(types.Content(role="user", parts=[types.Part(text=(
                     "Stop searching. Answer now using only what you have retrieved, in the usual structure. "
                     "Say plainly what you could not find."))]))
-                res = self.ladder.generate(rid, contents, system=SYSTEM, tools=None)
+                res = self.ladder.generate(rid, contents, system=_system(self.engine), tools=None)
                 text = res.text.strip() if not res.calls and res.text.strip() else (
                     "I could not finish this question within the step limit; please try a narrower question.")
         except AllModelsLimited as e:

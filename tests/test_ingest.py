@@ -70,3 +70,23 @@ def test_watcher_ingests_new_file(engine, tmp_path):
             n = c.execute(select(func.count()).select_from(documents)).scalar()
     stop.set()
     assert n == 1
+
+
+@pytest.mark.parametrize("f,dt,tk,asof", [
+    ("Apple_Q4_FY25_Earnings_Release.pdf", "earnings_release", "AAPL", "2025-10-24"),
+    ("NVIDIA Q1 FY2026 Financial Results.pdf", "earnings_release", "NVDA", "2025-05-26"),
+    ("Costco Q4 FY25 Operating Results.pdf", "earnings_release", "COST", "2025-09-29"),
+    ("NVIDIA Announces Financial Results for First Quarter Fiscal 2027.pdf", "earnings_release", "NVDA", "2026-05-20"),
+    ("Costco Investor Overview Oct 2025.pdf", "presentation_or_event", "COST", "2025-09-01"),
+    ("Northgate statement 2026-06-30.pdf", "custodian_statement", None, "2026-06-30"),
+])
+def test_classify_type_and_date_from_the_head(f, dt, tk, asof):
+    c = classify(pdf_text(P / f), f)
+    assert (c["doc_type"], c["ticker"], c["as_of"]) == (dt, tk, asof), f
+
+
+def test_classify_scans_tolerates_ocr_noise():
+    amzn = classify(ocr_pdf(P / "Doc_2026-02-06_scan.pdf"), "Doc_2026-02-06_scan.pdf")
+    assert (amzn["doc_type"], amzn["ticker"], amzn["as_of"]) == ("transcript", "AMZN", "2026-01-29")
+    unh = classify(ocr_pdf(P / "scan_20260730_1142.pdf"), "scan_20260730_1142.pdf")
+    assert (unh["doc_type"], unh["ticker"], unh["as_of"]) == ("earnings_release", "UNH", "2026-07-29")

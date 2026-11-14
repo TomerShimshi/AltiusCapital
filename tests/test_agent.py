@@ -15,7 +15,7 @@ class ScriptedLadder:
         self.script, self.i, self.seen, self.tools = script, 0, [], []
 
     def generate(self, run_id, contents, system=None, tools=None):
-        self.seen.append(len(contents)); self.tools.append(tools)
+        self.seen.append(len(contents)); self.tools.append(tools); self.systems = getattr(self, 'systems', []) + [system]
         out = self.script[min(self.i, len(self.script) - 1)]
         self.i += 1
         if isinstance(out, Exception):
@@ -80,3 +80,13 @@ def test_step_cap_forces_a_toolless_final_answer(db):
     lad = ScriptedLadder([call("reconcile_positions")] * MAX_STEPS + [final("Best answer from what I found.")])
     out = Agent(db, lad).answer("loop")
     assert out["answer"] == "Best answer from what I found." and lad.tools[-1] is None
+
+
+def test_list_documents_tool_and_date_context_in_prompt(db):
+    from app.ingest.pipeline import ingest_file
+    ingest_file(db, P / "Microsoft Q4 FY26 results.pdf")
+    lad = ScriptedLadder([call("list_documents", ticker="MSFT"), final("ok")])
+    out = Agent(db, lad).answer("what is the latest Microsoft document?")
+    step = Tracer(db).get_run(out["run_id"])["steps"][0]
+    assert step["name"] == "list_documents" and step["payload"]["result"][0]["as_of"] == "2026-07-27"
+    assert "2026-07-27" in lad.systems[0] and "list_documents" in lad.systems[0]
