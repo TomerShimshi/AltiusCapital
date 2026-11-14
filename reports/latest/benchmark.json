@@ -1,0 +1,546 @@
+{
+ "generated": "2026-11-14 11:14",
+ "commit": "3617eef",
+ "cases": [
+  {
+   "name": "COST held in both accounts is combined: 2,300 shares",
+   "area": "two custodians",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "COST combined market value",
+   "area": "two custodians",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "JPM quantity follows the custodian (7,250), not the books (7,520)",
+   "area": "books vs custodian",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Reconciliation flags JPM 7,520 vs 7,250",
+   "area": "books vs custodian",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Reconciliation flags Trust COST missing from the books",
+   "area": "books vs custodian",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "NVDA pre-split trade 1,800 @ 779.70 becomes 18,000 @ 77.97",
+   "area": "stock split",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "NVDA post-split trade is not adjusted",
+   "area": "stock split",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Trust UNH cost in USD from blotter (929,682) and loss (-270,244)",
+   "area": "CHF account",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Total listed securities value across both accounts",
+   "area": "aggregation",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Weights sum to 100%",
+   "area": "aggregation",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "MSFT is the largest position (17.8%)",
+   "area": "aggregation",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Rating scales normalise (Overweight=Buy, Equal-weight=Hold, Underweight=Sell)",
+   "area": "rating scales",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "NVDA: Calder & Rowe PT 240 vs Westbrook 155, houses disagree",
+   "area": "broker conflict",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "C&R NVDA note flagged: headline PT $165 vs rating box $240",
+   "area": "self-contradicting note",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "EPS basis differs by house (GAAP vs non-GAAP) on NVDA",
+   "area": "EPS basis",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "LLY has three houses on file",
+   "area": "considering names",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "UNH Halvard note postdates the 30 Jun snapshot and is flagged",
+   "area": "stale/new data",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Vendor EPS text '$4.82' (UNH Q1 2025) loaded as a number",
+   "area": "dirty spreadsheet",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "All PDFs ingested (57 unique), none failed",
+   "area": "ingestion",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Scans read by OCR and classified (AMZN call, UNH release, XOM release)",
+   "area": "OCR",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Exact-figure search '$50.2 billion' returns exactly the two documents that contain it (company release + Westbrook note)",
+   "area": "retrieval",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Search for a ticker with no documents returns nothing",
+   "area": "no hallucination",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Recommendation for unknown ticker META is no_data",
+   "area": "no hallucination",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "MSFT over the 15% cap -> trim, rule position_over_cap",
+   "area": "decision",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "TSLA (not held, Underweight) -> no_position_avoid",
+   "area": "decision",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "NVDA recommendation has low confidence (self-contradicting source)",
+   "area": "calibration",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "Holdings in one name across accounts: How many Costco shares do I own in total?",
+   "area": "agent",
+   "passed": true,
+   "detail": " [43s, run 20]"
+  },
+  {
+   "name": "Books vs custodian: Do my own records match the bank statements?",
+   "area": "agent",
+   "passed": true,
+   "detail": " [2s, run 21]"
+  },
+  {
+   "name": "Unknown company: Should I buy Meta?",
+   "area": "agent",
+   "passed": true,
+   "detail": " [2s, run 22]"
+  },
+  {
+   "name": "Broker disagreement shown: Should I sell NVIDIA?",
+   "area": "agent",
+   "passed": true,
+   "detail": " [3s, run 23]"
+  },
+  {
+   "name": "Most bullish broker: Which broker is most bullish on Lilly, and what is their price target?",
+   "area": "agent",
+   "passed": true,
+   "detail": " [2s, run 24]"
+  }
+ ],
+ "agent_runs": [
+  {
+   "question": "How many Costco shares do I own in total?",
+   "run_id": 20,
+   "seconds": 43.4,
+   "answer": "You own a total of **2,300** Costco shares across your two accounts [portfolio_exposure].\n\nHere is how they are split:\n- **Harbor Oak Holdings LLC** (Account 4471-8820): **1,400** shares [portfolio_exposure]\n- **Harbor Oak 2019 Family Trust** (Account CH-5521.03): **900** shares [portfolio_exposure]",
+   "tools": [
+    "portfolio_exposure"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.5-flash-lite"
+   ],
+   "fallbacks": [
+    "gemini-3.8-flash",
+    "gemini-3.7-flash",
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite"
+   ],
+   "prompt_tokens": 3392,
+   "output_tokens": 113,
+   "sources": [
+    "Banque Leman - releve 30.06.2026.pdf",
+    "Northgate statement 2026-06-30.pdf"
+   ]
+  },
+  {
+   "question": "Do my own records match the bank statements?",
+   "run_id": 21,
+   "seconds": 1.9,
+   "answer": "Your records do not match the bank statements across all positions. There is a discrepancy in one of your holdings:\n\n* **JPMorgan Chase & Co. (JPM)** in **Harbor Oak Holdings LLC**: \n  * Your books show **7,520** shares [reconcile_positions].\n  * The bank statement (Northgate statement 2026-06-30.pdf) shows **7,250** shares [reconcile_positions].\n  * This is a difference of **270** shares (your books are higher by 270 shares) [reconcile_positions].\n\n* **Costco Wholesale Corp. (COST)** in **Harbor Oak 2019 Family Trust**:\n  * The custodian statement (Banque Leman - releve 30.06.2026.pdf) lists **900** shares [reconcile_positions]. (The reconciliation tool did not report any difference for this position, meaning your books match the bank statement).",
+   "tools": [
+    "reconcile_positions"
+   ],
+   "models": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 2143,
+   "output_tokens": 237,
+   "sources": [
+    "Banque Leman - releve 30.06.2026.pdf",
+    "Northgate statement 2026-06-30.pdf"
+   ]
+  },
+  {
+   "question": "Should I buy Meta?",
+   "run_id": 22,
+   "seconds": 1.8,
+   "answer": "There are no documents on file for META.",
+   "tools": [
+    "list_documents"
+   ],
+   "models": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 2013,
+   "output_tokens": 25,
+   "sources": []
+  },
+  {
+   "question": "Should I sell NVIDIA?",
+   "run_id": 23,
+   "seconds": 2.9,
+   "answer": "1. **Verdict**: Hold NVIDIA with low confidence.\n\n2. **What the evidence says**: \n   - **Broker Views**: The two covering broker houses disagree [broker_views]. Calder & Rowe rates NVIDIA a Buy with a $240 price target (dated 2 March 2026), but carries a price target conflict flag [broker_views]. Westbrook Securities downgraded NVIDIA to Equal-weight (neutral) with a $155 price target on 29 May 2026 [broker_views]. \n   - **Consensus**: Overall consensus stands at 33 buys, 5 holds, and 4 sells [broker_views]. The consensus price target is $133, which sits slightly below the 30 June 2026 market price of $141.15 [broker_views].\n   - **Performance**: NVIDIA has beaten earnings estimates by an average of +2.4% over the last four quarters [recommend].\n\n3. **What it means for you**: \n   - **Quantity & Value**: You hold 14,000 shares worth $1,976,100 [portfolio_exposure].\n   - **Account**: Held entirely in Harbor Oak Holdings LLC (Account 4471-8820) [portfolio_exposure].\n   - **Cost & Gain**: Your cost basis is $1,091,580, giving you an unrealised gain of $884,520 [portfolio_exposure].\n   - **Portfolio Share**: NVIDIA makes up 13.48% of your total listed securities portfolio [portfolio_exposure].\n\n4. **Why this action, and alternatives considered**: \n   - **Why Hold**: The evidence is mixed\u2014one broker is positive while another recently downgraded the stock to neutral\u2014and does not clearly support a full exit or a trim [recommend]. \n   - **Alternatives Rejected**: \n     - *Sell/Exit*: Rejected because the evidence is not negative enough to justify selling the entire position and triggering capital gains.\n     - *Trim*: Rejected because your 13.48% weight is currently within normal operating limits and no policy mandates a reduction.\n     - *Add*: Rejected because the position is already large and near capacity limits.\n\n5. **What would change the call**: \n   - A clear consensus shift among analysts or a resolution of the conflicting broker price targets.\n   - Significant changes in fundamentals or valuation relative to the $133 consensus target.\n\n6. **Assumptions**: The position limits used are placeholder assumptions, not the client's policy. *This is analysis, not personalised tax or legal advice.*",
+   "tools": [
+    "list_documents",
+    "portfolio_exposure",
+    "broker_views",
+    "recommend"
+   ],
+   "models": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 4911,
+   "output_tokens": 633,
+   "sources": [
+    "Banque Leman - releve 30.06.2026.pdf",
+    "Calder & Rowe (Calder & Rowe NVDA Mar 2026.pdf)",
+    "Calder & Rowe NVDA Mar 2026.pdf",
+    "Consensus estimates.xlsx (Estimates)",
+    "Consensus estimates.xlsx (Price targets)",
+    "Northgate statement 2026-06-30.pdf",
+    "Westbrook NVDA downgrade to EW.pdf",
+    "Westbrook Securities (Westbrook NVDA downgrade to EW.pdf)"
+   ]
+  },
+  {
+   "question": "Which broker is most bullish on Lilly, and what is their price target?",
+   "run_id": 24,
+   "seconds": 2.2,
+   "answer": "The broker most bullish on Lilly is **Calder & Rowe** (analyst Marc Dubois), with a **Buy** rating and a price target of **$890** [broker_views].\n\n*(Note: Westbrook Securities has an \"Overweight\" rating with a target of $820, and Halvard Research has a \"Market Perform\" rating with a target of $705. Broker rating scales are not directly comparable across houses) [broker_views].*",
+   "tools": [
+    "list_documents",
+    "broker_views"
+   ],
+   "models": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 4061,
+   "output_tokens": 131,
+   "sources": [
+    "Calder & Rowe - Lilly - Apr 2026.pdf",
+    "Halvard Research LLY 5 May 2026.pdf",
+    "Westbrook - LLY - post Q1.pdf"
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "question": "How did Microsoft do last quarter?",
+   "run_id": 25,
+   "seconds": 54.0,
+   "answer": "Microsoft reported its fiscal 2026 fourth-quarter results on July 27, 2026. Here is the summary of their performance for the quarter ending June 30, 2026:\n\n*   **Revenue:** $64.6 billion, an increase of 12% compared to the same period last year [Microsoft Q4 FY26 results.pdf, 1].\n*   **Operating Income:** $27.3 billion, representing a 42.3% profit margin [Microsoft Q4 FY26 results.pdf, 1].\n*   **Earnings per Share (EPS):** $3.18 [Microsoft Q4 FY26 results.pdf, 1].\n*   **Cloud Performance:** Microsoft Cloud revenue reached $36.8 billion, with Azure and other cloud services growing by 30% [Microsoft Q4 FY26 results.pdf, 1].\n\nManagement described the period as a \"solid quarter\" [Microsoft Q4 FY26 results.pdf, 1].",
+   "tools": [
+    "list_documents",
+    "search_documents"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [
+    "gemini-3.8-flash",
+    "gemini-3.7-flash",
+    "gemini-3.5-flash"
+   ],
+   "prompt_tokens": 5551,
+   "output_tokens": 276,
+   "sources": [
+    "MSFT 10-Q March 2026.pdf",
+    "MSFT FY26 Q2 earnings release.pdf",
+    "Microsoft FY25 Q4 Earnings Release.pdf",
+    "Microsoft Q4 FY26 results.pdf"
+   ]
+  },
+  {
+   "question": "What is my biggest risk in the portfolio?",
+   "run_id": 26,
+   "seconds": 7.2,
+   "answer": "Your biggest risk in the portfolio is **MSFT (Microsoft)**, which currently represents your largest single holding by weight.\n\nAs of June 30, 2026, the position data shows:\n\n*   **Weight:** MSFT accounts for approximately 17.76% of your portfolio's total market value [portfolio_exposure].\n*   **Market Value:** The total value of your MSFT holding is $2,603,315 [portfolio_exposure].\n*   **Performance:** You have an unrealized gain of $662,215 on this position [portfolio_exposure].\n\nWhile AAPL is also a significant position (17.11% of the portfolio), MSFT currently holds the largest share. Concentrations in a single stock increase your portfolio's sensitivity to company-specific news and market volatility related to that entity. \n\nThis is analysis, not personalized tax or legal advice.",
+   "tools": [
+    "portfolio_exposure"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 3390,
+   "output_tokens": 209,
+   "sources": [
+    "Banque Leman - releve 30.06.2026.pdf",
+    "Northgate statement 2026-06-30.pdf"
+   ]
+  },
+  {
+   "question": "What changed for Apple compared with last year?",
+   "run_id": 27,
+   "seconds": 3.6,
+   "answer": "Apple has shown consistent financial growth over the last two fiscal years. \n\nAccording to the company's annual reports, here is how the performance compared for the most recent full years:\n\n*   **Net Sales:** Apple grew its annual revenue to $316,693 million for the fiscal year ended September 2025, up from $302,381 million in fiscal year 2024 [aapl-20250927 10-K, page 9].\n*   **Net Income:** Profits also increased, reaching $87,925 million in fiscal year 2025 compared to $83,824 million in fiscal year 2024 [aapl-20250927 10-K, page 9].\n*   **Operating Cash Flow:** Cash generated from operations rose to $103,760 million in fiscal year 2025, up from $98,943 million in the previous year [aapl-20250927 10-K, page 10].\n\nIn more recent updates, as of the first quarter of fiscal year 2026 (ended January 2026), the company noted mixed performance across its segments. While Services saw revenue growth of 9.5% compared to the prior year, the Wearables, Home, and Accessories segment saw a 4.7% decline, driven by softer demand for Apple Watch and AirPods [Apple Q1 FY26 call.pdf, page 2].",
+   "tools": [
+    "list_documents",
+    "search_documents"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [
+    "gemini-3.5-flash"
+   ],
+   "prompt_tokens": 5549,
+   "output_tokens": 403,
+   "sources": [
+    "Apple 10-K FY2024.pdf",
+    "Apple Q1 FY26 call.pdf",
+    "aapl-20250927 10-K.pdf"
+   ]
+  },
+  {
+   "question": "Should I sell NVIDIA?",
+   "run_id": 28,
+   "seconds": 19.0,
+   "answer": "I recommend that you **hold** your position in NVIDIA. My confidence in this recommendation is low because brokers are currently giving mixed signals.\n\n### What the evidence says\n*   **Broker views are split:** Westbrook Securities recently downgraded the stock to \"Equal-weight\" (a neutral rating) with a price target of $155. Calder & Rowe previously issued a \"Buy\" rating with a target of $240, though this note is now older.\n*   **Consensus:** While the overall market sentiment is generally positive (33 buy ratings vs. 5 hold and 4 sell), the current average price target of $133 is lower than the price of $141.15 as of June 30, 2026.\n\n### What it means for you\nYou currently hold 14,000 shares of NVIDIA in the **Harbor Oak Holdings LLC** account.\n*   **Cost basis:** $1,091,580\n*   **Current market value:** $1,976,100\n*   **Profit:** You have an unrealized gain of $884,520.\n*   **Portfolio impact:** NVIDIA currently makes up approximately 13.5% of your total equity portfolio.\n\n### Why this action\nI considered recommending that you trim your position, but your current holding is within normal limits and the evidence does not clearly support a full exit. A \"hold\" keeps you invested in the growth story while acknowledging the current uncertainty among analysts.\n\n### What would change the call\nI would reconsider this position if the broker consensus becomes more consistent or if your internal portfolio rules change (for example, if you set a stricter cap on how large this position can be).\n\n*This is analysis, not personalized tax or legal advice.*",
+   "tools": [
+    "list_documents",
+    "portfolio_exposure",
+    "recommend"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 9313,
+   "output_tokens": 427,
+   "sources": [
+    "Banque Leman - releve 30.06.2026.pdf",
+    "Calder & Rowe (Calder & Rowe NVDA Mar 2026.pdf)",
+    "Consensus estimates.xlsx (Estimates)",
+    "Consensus estimates.xlsx (Price targets)",
+    "Northgate statement 2026-06-30.pdf",
+    "Westbrook Securities (Westbrook NVDA downgrade to EW.pdf)"
+   ]
+  },
+  {
+   "question": "Tell me about Lilly, I'm thinking of buying it.",
+   "run_id": 29,
+   "seconds": 15.5,
+   "answer": "I have reviewed the available information on Lilly (LLY).\n\n### Verdict\nI recommend a **\"No Position: Buy\"** stance, which means you should watch the stock for now but consider a purchase if your confidence in the research increases.\n\n### Evidence\nBroker opinions on Lilly are currently mixed:\n*   **Calder & Rowe** (2 Apr 2026) rates the stock a \"Buy\" with a price target of $890.\n*   **Westbrook Securities** (4 May 2026) rates it \"Overweight\" with a target of $820.\n*   **Halvard Research** (5 May 2026) is more cautious, rating it \"Market Perform\" with a target of $705.\n\nAs of 30 June 2026, the general market consensus is positive, with 30 \"Buy\" ratings and 9 \"Hold\" ratings. The consensus price target is $902, which represents an 11.4% upside from the $809.64 share price on 30 June 2026. Please note that broker rating systems are not directly comparable, and these houses disagree on their outlooks.\n\n### What this means for you\nYou currently have no position in Lilly in your portfolio, so there is no cost basis or unrealized gain/loss to report.\n\n### Why this action\nI recommend waiting because the broker community is not in full agreement. While many analysts see value, Halvard Research's lower target suggests caution. Keeping it on a \"watch list\" allows you to see how the stock performs relative to expectations before committing capital.\n\n### What would change this call\n*   **Analyst Alignment:** If the brokers move toward a more unified rating, my confidence in recommending a buy will increase.\n*   **New Results:** Strong future earnings reports that beat current expectations would also strengthen the case for buying.\n\n*This is analysis, not personalized tax or legal advice.*",
+   "tools": [
+    "list_documents",
+    "broker_views",
+    "recommend"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 6276,
+   "output_tokens": 470,
+   "sources": [
+    "Calder & Rowe (Calder & Rowe - Lilly - Apr 2026.pdf)",
+    "Calder & Rowe - Lilly - Apr 2026.pdf",
+    "Consensus estimates.xlsx (Estimates)",
+    "Consensus estimates.xlsx (Price targets)",
+    "Halvard Research (Halvard Research LLY 5 May 2026.pdf)",
+    "Halvard Research LLY 5 May 2026.pdf",
+    "Westbrook - LLY - post Q1.pdf",
+    "Westbrook Securities (Westbrook - LLY - post Q1.pdf)"
+   ]
+  },
+  {
+   "question": "Do my books match the custodian statements?",
+   "run_id": 30,
+   "seconds": 5.3,
+   "answer": "No, your books do not match the custodian statements. There is a discrepancy in the records for **JPM** in the **Harbor Oak Holdings LLC** account:\n\n*   **JPM (Harbor Oak Holdings LLC):** Your books show 7,520 shares, but the Northgate statement shows 7,250 shares, a difference of 270 shares [Northgate statement 2026-06-30.pdf].\n\nThe custodian statement is the official record. There are no other discrepancies noted for other positions [reconcile_positions].",
+   "tools": [
+    "reconcile_positions"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 2141,
+   "output_tokens": 136,
+   "sources": [
+    "Banque Leman - releve 30.06.2026.pdf",
+    "Northgate statement 2026-06-30.pdf"
+   ]
+  },
+  {
+   "question": "What did Tesla say at its Investor Day?",
+   "run_id": 31,
+   "seconds": 3.1,
+   "answer": "Tesla's Investor Day was held on March 19, 2026. The company presented its outlook and financial framework, focusing on several key areas [Tesla Investor Day 2026.pdf, 2]:\n\n*   **Energy:** Tesla described energy as its \"next growth engine.\"\n*   **Autonomy:** They discussed a roadmap for Robotaxi development.\n*   **Capacity and Capital:** They reviewed their current approach to growth and production capacity.\n*   **2030 Ambition:** The company shared its long-term goals for the end of the decade.\n\nThe event materials specifically highlighted their adjusted EBITDA trajectory, noting that 2025 GAAP income from operations was $4.6 billion [Tesla Investor Day 2026.pdf, 4].\n\nA broker report from Westbrook Securities later pointed out that Tesla's \"adjusted EBITDA\" figure for 2025, presented as $11.9 billion, included significant add-backs for stock-based compensation and restructuring costs, which were more than double the GAAP income from operations reported for the same year [Westbrook Tesla UW Apr 2026.pdf, 1].\n\nTesla noted that the projections and targets shared at the event were not official guidance and are subject to significant risks [Tesla Investor Day 2026.pdf, 1, 10].",
+   "tools": [
+    "list_documents",
+    "search_documents"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 4344,
+   "output_tokens": 333,
+   "sources": [
+    "Tesla Investor Day 2026.pdf",
+    "Westbrook Tesla UW Apr 2026.pdf"
+   ]
+  },
+  {
+   "question": "What did ExxonMobil report in Q2 2025?",
+   "run_id": 32,
+   "seconds": 2.7,
+   "answer": "For the second quarter of 2025, ExxonMobil reported the following financial results [XOM 10-K 2025, page 6]:\n\n*   **Total Revenues and Other Income:** $68.73 billion\n*   **Operating Income:** $14.77 billion\n*   **Net Income:** $10.17 billion\n*   **Diluted Earnings Per Share (EPS):** $2.36\n\nThese figures are taken from the company's 2025 Form 10-K [XOM 10-K 2025, page 6].",
+   "tools": [
+    "list_documents",
+    "search_documents"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 4753,
+   "output_tokens": 196,
+   "sources": [
+    "ExxonMobil Announces Fourth-Quarter 2025 Results.pdf",
+    "XOM 10-K 2025.pdf",
+    "XOM 1Q26 results.pdf"
+   ]
+  },
+  {
+   "question": "How much have I made on UNH?",
+   "run_id": 33,
+   "seconds": 11.6,
+   "answer": "As of June 30, 2026, you have an unrealized loss of $270,244 on your investment in UNH.\n\nThis position is held in the Harbor Oak 2019 Family Trust (account CH-5521.03) [Banque Leman - releve 30.06.2026.pdf].",
+   "tools": [
+    "portfolio_exposure"
+   ],
+   "models": [
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash-lite"
+   ],
+   "fallbacks": [],
+   "prompt_tokens": 3390,
+   "output_tokens": 95,
+   "sources": [
+    "Banque Leman - releve 30.06.2026.pdf",
+    "Northgate statement 2026-06-30.pdf"
+   ]
+  },
+  {
+   "question": "Should I buy Meta?",
+   "run_id": 34,
+   "seconds": 2.1,
+   "answer": "There are no documents on file for META.",
+   "tools": [
+    "list_documents"
+   ],
+   "models": [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash-lite"
+   ],
+   "fallbacks": [
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite"
+   ],
+   "prompt_tokens": 2013,
+   "output_tokens": 25,
+   "sources": []
+  }
+ ]
+}

@@ -22,6 +22,20 @@ def run_det(e):
     return rows
 
 
+DETAILS = []  # per-question records (answer, tools, models, tokens, seconds) for the report
+
+
+def describe_run(tr, out, question, seconds):
+    steps = tr.get_run(out["run_id"])["steps"]
+    models = [s["name"] for s in steps if s["kind"] == "model"]
+    tokens = [s["payload"].get("tokens") or {} for s in steps if s["kind"] == "model"]
+    return dict(question=question, run_id=out["run_id"], seconds=round(seconds, 1), answer=out["answer"],
+                tools=[s["name"] for s in steps if s["kind"] == "tool"], models=models,
+                fallbacks=[s["name"] for s in steps if s["kind"] == "fallback"],
+                prompt_tokens=sum(t.get("prompt", 0) for t in tokens), output_tokens=sum(t.get("output", 0) for t in tokens),
+                sources=sorted({c["source"] for c in out["citations"]}))
+
+
 def run_agent(e):
     tr = Tracer(e)
     agent = Agent(e, Ladder(config.GEMINI_MODELS, gemini_call(), tr))
@@ -29,6 +43,7 @@ def run_agent(e):
     for name, q, tools, must, mustnot in AGENT:
         t0 = time.time()
         out = agent.answer(q)
+        DETAILS.append(describe_run(tr, out, q, time.time() - t0))
         used = {s["name"] for s in tr.get_run(out["run_id"])["steps"] if s["kind"] == "tool"}
         fails = []
         if not tools <= used:

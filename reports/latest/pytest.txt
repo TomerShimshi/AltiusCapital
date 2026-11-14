@@ -1,0 +1,42 @@
+...............................................................          [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.9/site-packages/google/genai/types.py:9908
+  /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/.venv/lib/python3.9/site-packages/google/genai/types.py:9908: PydanticDeprecatedSince212: Using `@model_validator` with mode='after' on a classmethod is deprecated. Instead, use an instance method. See the documentation at https://docs.pydantic.dev/2.13/concepts/validators/#model-after-validator. Deprecated in Pydantic V2.12 to be removed in V3.0.
+    def validate_name(cls, model: 'Metric') -> 'Metric':
+
+.venv/lib/python3.9/site-packages/google/auth/__init__.py:54
+  /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/.venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+    warnings.warn(eol_message.format("3.9"), FutureWarning)
+
+.venv/lib/python3.9/site-packages/urllib3/__init__.py:35
+  /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+    warnings.warn(
+
+.venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40
+  /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/.venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+    warnings.warn(eol_message.format("3.9"), FutureWarning)
+
+tests/test_documents.py::test_new_document_arriving_later_is_dated_findable_and_becomes_latest
+tests/test_retrieval.py::test_semantic_query_with_ticker_filter
+tests/test_retrieval.py::test_exact_number_found_by_bm25
+tests/test_retrieval.py::test_new_document_becomes_searchable
+  /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/app/retrieval.py:69: RuntimeWarning: divide by zero encountered in matmul
+    vec_scores = mat @ qv
+
+tests/test_documents.py::test_new_document_arriving_later_is_dated_findable_and_becomes_latest
+tests/test_retrieval.py::test_semantic_query_with_ticker_filter
+tests/test_retrieval.py::test_exact_number_found_by_bm25
+tests/test_retrieval.py::test_new_document_becomes_searchable
+  /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/app/retrieval.py:69: RuntimeWarning: overflow encountered in matmul
+    vec_scores = mat @ qv
+
+tests/test_documents.py::test_new_document_arriving_later_is_dated_findable_and_becomes_latest
+tests/test_retrieval.py::test_semantic_query_with_ticker_filter
+tests/test_retrieval.py::test_exact_number_found_by_bm25
+tests/test_retrieval.py::test_new_document_becomes_searchable
+  /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/app/retrieval.py:69: RuntimeWarning: invalid value encountered in matmul
+    vec_scores = mat @ qv
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /Users/tomershimshi/Desktop/Projects/jobs/AltiusCapital/reports/latest/junit.xml -
+63 passed, 16 warnings in 136.37s (0:02:16)

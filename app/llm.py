@@ -15,6 +15,7 @@ class LLMResult:
     calls: list = field(default_factory=list)  # [{"name": str, "args": dict}]
     model: str = ""
     content: object = None                      # provider-native message, to append to history
+    tokens: dict = field(default_factory=dict)  # {"prompt": int, "output": int} when the provider reports usage
 
 
 class AllModelsLimited(Exception):
@@ -48,7 +49,7 @@ class Ladder:
                 continue
             res.model = m
             self.tracer.step(run_id, "model", m, dict(rung=i, calls=[c["name"] for c in res.calls],
-                                                      reason="primary" if i == 0 else "fallback rung"),
+                                                      reason="primary" if i == 0 else "fallback rung", tokens=res.tokens),
                              model=m, ms=int((time.time() - t0) * 1000))
             return res
         waits = [t - now for t in self.cooling_until.values() if t > now]
@@ -72,5 +73,8 @@ def gemini_call(api_key: str = None, timeout_ms: int = 20000):
         text = "".join(p.text for p in parts if getattr(p, "text", None))
         calls = [dict(name=p.function_call.name, args=dict(p.function_call.args or {}))
                  for p in parts if getattr(p, "function_call", None)]
-        return LLMResult(text=text, calls=calls, model=model, content=cand)
+        u = getattr(r, "usage_metadata", None)
+        tokens = dict(prompt=getattr(u, "prompt_token_count", 0) or 0,
+                      output=getattr(u, "candidates_token_count", 0) or 0) if u else {}
+        return LLMResult(text=text, calls=calls, model=model, content=cand, tokens=tokens)
     return call

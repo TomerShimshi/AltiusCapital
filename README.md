@@ -43,7 +43,11 @@ Open http://localhost:8765 . Try: "Should I sell NVIDIA?", "Do my books match th
 "Is Tesla a buy?". Use **Show the work** under any answer to see each model choice, fallback and tool call.
 
 New documents: drop a PDF into the `portfolio/` folder (a watcher ingests it within ~5 s) or use
-**Add a document** in the UI. Re-adding the same file is a no-op (content hash).
+**Add a document** in the UI. Re-adding the same file is a no-op (content hash). Every document is typed and
+dated from its first page (`as_of`), and the agent can list what is on file, newest first. To see it live, copy
+`demo/Microsoft repurchase and Azure expansion Aug 2026.pdf` (an invented document) into `portfolio/` and ask
+"Has Microsoft announced any new share buyback or Azure capacity plans recently?" before and after.
+After upgrading the classifier on an existing database, run `python -m app.reclassify`.
 
 ## Tests and benchmark
 ```bash
@@ -51,7 +55,11 @@ pytest -q                                    # unit tests (SQLite); no API key n
 TEST_DB_URL=mysql+pymysql://root@127.0.0.1:3306/altius_test pytest -q   # same tests on MySQL
 python -m benchmark.run                      # 26 deterministic cases against the loaded DB, no LLM
 python -m benchmark.run --agent              # + 5 live-agent cases (uses the Gemini free tier)
+python -m benchmark.report --agent           # everything above + 10 sample questions -> reports/latest/
 ```
+**System status at a glance:** open [`reports/latest/SUMMARY.md`](reports/latest/SUMMARY.md) (test and benchmark
+results, data loaded, models used) and [`reports/latest/sample_answers.md`](reports/latest/sample_answers.md)
+(real answers with tools, models, tokens and sources). Regenerate them with the command above.
 Free-tier rate limits are real: the agent falls back through a ladder of models
 (`GEMINI_MODELS` in `.env`, strongest first) and tells the user when everything is limited.
 Model availability on free keys changes; set `GEMINI_MODELS` to models that answer for your key.

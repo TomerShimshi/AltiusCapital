@@ -83,3 +83,14 @@ def test_timeout_504_cools_longer_than_429(tr):
     lad = Ladder(["a", "b"], Fake({"a": Err(504), "b": "ok"}), t, clock=Clock(), cooldown_s=60)
     lad.generate(rid, [])
     assert lad.cooling_until["a"] == 180
+
+
+def test_token_usage_is_recorded_on_the_model_step(tr):
+    t, rid = tr
+
+    def call(model, contents, system=None, tools=None):
+        return LLMResult(text="hi", model=model, tokens=dict(prompt=1200, output=80))
+
+    Ladder(["a"], call, t).generate(rid, [])
+    step = [s for s in t.get_run(rid)["steps"] if s["kind"] == "model"][0]
+    assert step["payload"]["tokens"] == dict(prompt=1200, output=80)

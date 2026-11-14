@@ -45,3 +45,18 @@ def test_reclassify_repairs_type_and_date_from_stored_text(loaded):
     docs = {d["filename"]: d for d in list_documents(loaded, ticker="MSFT")}
     assert docs["Microsoft Q4 FY26 results.pdf"]["doc_type"] == "earnings_release"
     assert docs["Microsoft Q4 FY26 results.pdf"]["as_of"] == "2026-07-27"
+
+
+DEMO = config.PORTFOLIO_DIR.parent.parent / "demo" / "Microsoft repurchase and Azure expansion Aug 2026.pdf"
+
+
+def test_new_document_arriving_later_is_dated_findable_and_becomes_latest(loaded):
+    from app.retrieval import search_documents
+    assert list_documents(loaded, ticker="MSFT")[0]["as_of"] == "2026-07-27"
+    r = ingest_file(loaded, DEMO)
+    assert r["status"] == "new" and r["ticker"] == "MSFT"
+    latest = list_documents(loaded, ticker="MSFT")[0]
+    assert latest["filename"] == DEMO.name and latest["as_of"] == "2026-08-12" and latest["latest_of_type"]
+    hit = search_documents(loaded, "additional $18.5 billion share repurchase", ticker="MSFT", k=3)
+    assert hit[0]["doc"] == DEMO.name
+    assert ingest_file(loaded, DEMO)["status"] == "duplicate"
