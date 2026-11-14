@@ -117,7 +117,13 @@ class Agent:
                     parts.append(types.Part.from_function_response(name=c["name"], response={"result": result}))
                 contents.append(types.Content(role="user", parts=parts))
             else:
-                text = "I could not finish this question within the step limit; please try a narrower question."
+                # Step budget spent: force one last tool-free call so the evidence gathered is not wasted.
+                contents.append(types.Content(role="user", parts=[types.Part(text=(
+                    "Stop searching. Answer now using only what you have retrieved, in the usual structure. "
+                    "Say plainly what you could not find."))]))
+                res = self.ladder.generate(rid, contents, system=SYSTEM, tools=None)
+                text = res.text.strip() if not res.calls and res.text.strip() else (
+                    "I could not finish this question within the step limit; please try a narrower question.")
         except AllModelsLimited as e:
             text = (f"The AI service is rate-limited right now (free tier). Please try again in about "
                     f"{int(e.retry_after_s)} seconds.")

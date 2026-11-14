@@ -12,10 +12,10 @@ P = config.PORTFOLIO_DIR
 
 class ScriptedLadder:
     def __init__(self, script):
-        self.script, self.i, self.seen = script, 0, []
+        self.script, self.i, self.seen, self.tools = script, 0, [], []
 
     def generate(self, run_id, contents, system=None, tools=None):
-        self.seen.append(len(contents))
+        self.seen.append(len(contents)); self.tools.append(tools)
         out = self.script[min(self.i, len(self.script) - 1)]
         self.i += 1
         if isinstance(out, Exception):
@@ -74,3 +74,9 @@ def test_step_cap(db):
     lad = ScriptedLadder([call("reconcile_positions")])  # never stops calling tools
     out = Agent(db, lad).answer("loop")
     assert lad.i <= MAX_STEPS + 1 and "could not finish" in out["answer"].lower()
+
+
+def test_step_cap_forces_a_toolless_final_answer(db):
+    lad = ScriptedLadder([call("reconcile_positions")] * MAX_STEPS + [final("Best answer from what I found.")])
+    out = Agent(db, lad).answer("loop")
+    assert out["answer"] == "Best answer from what I found." and lad.tools[-1] is None
